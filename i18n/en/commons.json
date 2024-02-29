@@ -1,0 +1,18 @@
+{
+  "dashboard": "Dashboard",
+  "menu": "Menu",
+  "settings": "Settings",
+  "language(map)": {
+    "en": "English",
+    "es": "Spanish"
+  },
+  "noData": "No Data",
+  "unexpectedError": "Unexpected error",
+  "cancel": "Cancel",
+  "undo": "Undo",
+  "continues": "Continue",
+  "delete": "Delete",
+  "seat": "Seat",
+  "name": "Name",
+  "notAssigned": "Not Assigned"
+}

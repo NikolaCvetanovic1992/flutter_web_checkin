@@ -1,0 +1,16 @@
+export 'assign_seat_response.dart';
+export 'boarding_pass_response.dart';
+export 'check_in_response.dart';
+export 'check_in_schema.dart';
+export 'passbook_response.dart';
+export 'passenger_details_response.dart';
+export 'passenger_itinerary.dart';
+export 'passenger_result.dart';
+export 'preferences_schema.dart';
+export 'search_passenger_response.dart';
+export 'seat_plan_class.dart';
+export 'seat_plan_position.dart';
+export 'seat_plan_response.dart';
+export 'seat_plan_row.dart';
+export 'seat_status_response.dart';
+export 'section_schema.dart';

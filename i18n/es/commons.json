@@ -1,0 +1,18 @@
+{
+  "dashboard": "Panel",
+  "menu": "Menu",
+  "settings": "Ajustes",
+  "language(map)": {
+    "en": "Ingles",
+    "es": "Español"
+  },
+  "noData": "No hay pasajeros",
+  "unexpectedError": "Error inesperado",
+  "cancel": "Cancelar",
+  "undo": "Deshacer",
+  "continues": "Continuar",
+  "delete": "Borrar",
+  "seat": "Asiento",
+  "name": "Nombre",
+  "notAssigned": "No asignado"
+}
