@@ -43,11 +43,11 @@ class BoardingPassViewBloc
     add(const BoardingPassViewEvent.boardingPassRequested());
   }
 
-  @override
-  Future<void> close() {
-    _pdfController.dispose();
-    return super.close();
-  }
+  // @override
+  // Future<void> close() {
+  //   _pdfController.dispose();
+  //   return super.close();
+  // }
 
   void _onPassengerInitialized(
     _PassengerInitialized event,

@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_ink_web_check_in/ui/ui.dart';
 import 'package:go_router/go_router.dart';
@@ -25,11 +23,11 @@ class _PDFAlertViewerState extends State<PDFAlertViewer> {
     super.initState();
   }
 
-  @override
-  void dispose() {
-    controller.dispose();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   controller.dispose();
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -55,12 +53,12 @@ class _PDFAlertViewerState extends State<PDFAlertViewer> {
             flex: 5,
             child: Padding(
               padding: edgeInsets20.copyWith(top: 50),
-              child: Center(
-                child: PdfViewer.data(
-                  base64.decode(widget.base64String),
-                  controller: controller,
-                ),
-              ),
+              // child: Center(
+              //   child: PdfViewer.data(
+              //     base64.decode(widget.base64String),
+              //     controller: controller,
+              //   ),
+              // ),
             ),
           ),
           const Spacer(),
