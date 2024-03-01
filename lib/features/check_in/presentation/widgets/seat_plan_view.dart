@@ -226,119 +226,111 @@ class _CabineWidget extends StatelessWidget {
         var currentClass = state.seatPlan?.seatPlanClass[0].name;
         var classColorFactor = 300;
 
-        log(classesLabelIndexes.toString());
-
         return IgnorePointer(
           ignoring: state.assigmentStatus == SeatAssigmentStatus.loading,
-          child: InteractiveViewer(
-            transformationController: transformationController,
-            minScale: 0.1,
-            constrained: false,
-            child: Container(
-              padding: edgeInsets5.copyWith(top: 30),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(
-                  color: context.colorSchema.onPrimary,
-                ),
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(40),
-                  topRight: Radius.circular(40),
-                  bottomLeft: Radius.circular(10),
-                  bottomRight: Radius.circular(10),
-                ),
+          child: Container(
+            padding: edgeInsets5.copyWith(top: 30),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border.all(
+                color: context.colorSchema.onPrimary,
               ),
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  minWidth: MediaQuery.of(context).size.width - 20,
-                  maxWidth: numberOfRows * 80,
-                ),
-                child: ListView.builder(
-                  physics: const NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemCount: numberOfColums,
-                  itemBuilder: (context, index) {
-                    final seatPlanRowPosition =
-                        seatPlanRows[index].seatPlanPosition;
-                    final rowNumber = seatPlanRows[index].row;
-                    final rowClass = seatPlanRows[index].className;
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(40),
+                topRight: Radius.circular(40),
+                bottomLeft: Radius.circular(10),
+                bottomRight: Radius.circular(10),
+              ),
+            ),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minWidth: 200,
+                maxWidth: numberOfRows * 80,
+              ),
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: numberOfColums,
+                itemBuilder: (context, index) {
+                  final seatPlanRowPosition =
+                      seatPlanRows[index].seatPlanPosition;
+                  final rowNumber = seatPlanRows[index].row;
+                  final rowClass = seatPlanRows[index].className;
 
-                    if (currentClass != rowClass) {
-                      currentClass = rowClass;
-                      classColorFactor = classColorFactor + 100;
-                    }
-                    const passengerClass = 'Business';
+                  if (currentClass != rowClass) {
+                    currentClass = rowClass;
+                    classColorFactor = classColorFactor + 100;
+                  }
+                  const passengerClass = 'Business';
 
-                    return Row(
-                      children: [
-                        seatPlanRowPosition[0].exitSeat
-                            ? const _ExitDoor(
-                                isRight: false,
-                              )
-                            : const _Window(
-                                isLeft: true,
+                  return Row(
+                    children: [
+                      seatPlanRowPosition[0].exitSeat
+                          ? const _ExitDoor(
+                              isRight: false,
+                            )
+                          : const _Window(
+                              isLeft: true,
+                            ),
+                      for (final seatPlan in seatPlanRowPosition)
+                        _CabineItem(
+                          rowClass: rowClass!,
+                          passengerClass: passengerClass,
+                          seatStatuses: state.occupancySeatStatus!,
+                          seat: seatPlan,
+                          selectedSeats: selectedSeats,
+                          row: rowNumber,
+                          width: 50,
+                          onSeatSelected: (seatNumber) {
+                            if (state.selectedPassenger == null) return;
+                            bloc.add(
+                              SeatPlanViewEvent.seatSelected(
+                                seatNumber,
                               ),
-                        for (final seatPlan in seatPlanRowPosition)
-                          _CabineItem(
-                            rowClass: rowClass!,
-                            passengerClass: passengerClass,
-                            seatStatuses: state.occupancySeatStatus!,
-                            seat: seatPlan,
-                            selectedSeats: selectedSeats,
-                            row: rowNumber,
-                            width: 50,
-                            onSeatSelected: (seatNumber) {
-                              if (state.selectedPassenger == null) return;
-                              bloc.add(
-                                SeatPlanViewEvent.seatSelected(
-                                  seatNumber,
-                                ),
-                              );
-                            },
-                          ),
-                        seatPlanRowPosition[seatPlanRowPosition.length - 1]
-                                .exitSeat
-                            ? const _ExitDoor(
-                                isRight: true,
-                              )
-                            : const _Window(
-                                isLeft: false,
-                              ),
-                        Expanded(
-                          child: Padding(
-                            padding: edgeInsetsH2,
-                            child: SizedBox(
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.grey[classColorFactor],
-                                  borderRadius: rowNumber == seatPlanRows[0].row
-                                      ? const BorderRadius.only(
-                                          topLeft: Radius.circular(5),
-                                          topRight: Radius.circular(20),
-                                        )
-                                      : null,
-                                ),
-                                height: 50,
-                                child: classesLabelIndexes.contains(rowNumber)
-                                    ? Text(
-                                        rowClass!,
-                                        style: context.textTheme.bodyMedium!
-                                            .copyWith(
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                        textAlign: TextAlign.center,
-                                        overflow: TextOverflow.fade,
+                            );
+                          },
+                        ),
+                      seatPlanRowPosition[seatPlanRowPosition.length - 1]
+                              .exitSeat
+                          ? const _ExitDoor(
+                              isRight: true,
+                            )
+                          : const _Window(
+                              isLeft: false,
+                            ),
+                      Expanded(
+                        child: Padding(
+                          padding: edgeInsetsH2,
+                          child: SizedBox(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.grey[classColorFactor],
+                                borderRadius: rowNumber == seatPlanRows[0].row
+                                    ? const BorderRadius.only(
+                                        topLeft: Radius.circular(5),
+                                        topRight: Radius.circular(20),
                                       )
-                                    : const SizedBox.shrink(),
+                                    : null,
                               ),
+                              height: 50,
+                              child: classesLabelIndexes.contains(rowNumber)
+                                  ? Text(
+                                      rowClass!,
+                                      style: context.textTheme.bodyMedium!
+                                          .copyWith(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                      overflow: TextOverflow.fade,
+                                    )
+                                  : const SizedBox.shrink(),
                             ),
                           ),
                         ),
-                      ],
-                    );
-                  },
-                ),
+                      ),
+                    ],
+                  );
+                },
               ),
             ),
           ),

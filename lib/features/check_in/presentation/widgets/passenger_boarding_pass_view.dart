@@ -1,5 +1,4 @@
-import 'dart:convert';
-import 'dart:io';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -7,7 +6,6 @@ import 'package:flutter_ink_web_check_in/core/core.dart';
 import 'package:flutter_ink_web_check_in/features/features.dart';
 import 'package:flutter_ink_web_check_in/ui/ui.dart';
 import 'package:go_router/go_router.dart';
-import 'package:pdfrx/pdfrx.dart';
 
 class PassengerBoardingPassView extends StatelessWidget {
   const PassengerBoardingPassView({super.key});
@@ -56,8 +54,8 @@ class PassengerBoardingPassView extends StatelessWidget {
       child: BlocConsumer<BoardingPassViewBloc, BoardingPassViewState>(
         listener: _listener,
         builder: (context, state) {
-          if (state.status == BoardingPassStatus.initial ||
-              state.status == BoardingPassStatus.loading) {
+          if (state.status == BoardingPassStatus.loading ||
+              state.status == BoardingPassStatus.initial) {
             return const CircleLoadingIndicator();
           }
 
@@ -68,72 +66,10 @@ class PassengerBoardingPassView extends StatelessWidget {
           }
 
           final bloc = context.read<BoardingPassViewBloc>();
-          final multipleBoardingPasses = state.boardingPassPdfBytes.length > 1;
 
           return Column(
             children: [
-              if (multipleBoardingPasses)
-                const Expanded(flex: 9, child: PassengerBoardingPassGroup())
-              else ...[
-                Expanded(
-                  flex: 6,
-                  child: PdfViewer.data(
-                    base64.decode(state.boardingPassPdfBytes[0]),
-                    controller: bloc.pdfController,
-                  ),
-                ),
-                gap20,
-                Expanded(
-                  child: SecondaryButton(
-                    text: 'Download PDF',
-                    onPressed: () {
-                      bloc.add(
-                        BoardingPassViewEvent.savePDFRequested(
-                          state.passengers[0],
-                        ),
-                      );
-                      //TODO(Jsmorales): move this snackbar to the bloc listener
-                      CustomSnackBar.success(
-                        context: context,
-                        title: 'Download completed, check your files folder',
-                      );
-                    },
-                  ),
-                ),
-                gap10,
-                Expanded(
-                  child: SecondaryButton(
-                    text: 'Download for Passbook',
-                    onPressed: () {
-                      bloc.add(
-                        BoardingPassViewEvent.savePassbookRequested(
-                          state.passengers[0],
-                        ),
-                      );
-                      //TODO(Jsmorales): move this snackbar to the bloc listener
-                      CustomSnackBar.success(
-                        context: context,
-                        title: 'Download completed, check your files folder',
-                      );
-                    },
-                  ),
-                ),
-                if (Platform.isIOS) ...[
-                  gap10,
-                  Expanded(
-                    child: SecondaryButton(
-                      text: 'Add to Passbook',
-                      onPressed: () {
-                        bloc.add(
-                          BoardingPassViewEvent.addPassbookRequested(
-                            state.passengers[0],
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ],
-              ],
+              const Expanded(flex: 9, child: PassengerBoardingPassGroup()),
               gap10,
               StepsFooter(
                 onNext: () {
@@ -156,81 +92,37 @@ class PassengerBoardingPassGroup extends StatelessWidget {
   Widget build(BuildContext context) {
     final bloc = context.read<BoardingPassViewBloc>();
     final passengers = bloc.state.passengers;
+
     return ListView.builder(
       itemCount: passengers.length,
       itemBuilder: (context, index) {
         final passenger = passengers[index];
-
+        log(passengers.toString());
         return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              passenger.passengerName,
-              style: context.textTheme.displayMedium!.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const Divider(),
-            gap10,
-            Column(
+            Row(
               children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: CustomTextButton(
-                        text: 'Download PDF',
-                        onPressed: () {
-                          bloc.add(
-                            BoardingPassViewEvent.savePDFRequested(
-                              passenger,
-                            ),
-                          );
-                          CustomSnackBar.success(
-                            context: context,
-                            title:
-                                'Download completed, check your files folder',
-                          );
-                        },
-                      ),
-                    ),
-                    space4,
-                    if (Platform.isIOS) ...[
-                      Expanded(
-                        child: CustomTextButton(
-                          text: 'Download for Passbook',
-                          onPressed: () {
-                            bloc.add(
-                              BoardingPassViewEvent.savePassbookRequested(
-                                passenger,
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ],
-                  ],
+                Text(
+                  passenger.passengerName,
+                  style: context.textTheme.displayMedium!.copyWith(),
                 ),
-                Row(
-                  children: [
-                    if (Platform.isIOS) ...[
-                      Expanded(
-                        child: CustomTextButton(
-                          text: 'Add to Passbook',
-                          onPressed: () {
-                            bloc.add(
-                              BoardingPassViewEvent.addPassbookRequested(
-                                passenger,
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ],
-                  ],
+                space10,
+                Text(
+                  'Seat: ${passenger.apis!.itinerary![0].seatNumber}',
+                  style: context.textTheme.displayMedium!.copyWith(
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                space10,
+                Text(
+                  'Flight No: ${passenger.flightNumber}',
+                  style: context.textTheme.displayMedium!.copyWith(
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ],
             ),
-            gap40,
+            const Divider(),
           ],
         );
       },

@@ -23,7 +23,7 @@ class HttpApi {
     HttpMethod method = HttpMethod.get,
     Json? queryParameters = const {},
     Map<String, String> headers = const {},
-    Map<String, dynamic> body = const {},
+    Map<String, dynamic>? body,
 
     /// if autoDecodeReponse is false on the parser callback you will get response.bodyBytes (Uint8List)
     bool autoDecodeReponse = true,
@@ -58,7 +58,6 @@ class HttpApi {
       final response = await _dio.request<dynamic>(
         path,
         queryParameters: queryParameters,
-        data: body,
         options: Options(
           receiveTimeout: receiveTimeout,
           contentType: headerContentType,
@@ -67,6 +66,8 @@ class HttpApi {
           headers: newHeaders,
         ),
       );
+
+      log('req senttt');
 
       log(
         const JsonEncoder.withIndent(' ').convert({
