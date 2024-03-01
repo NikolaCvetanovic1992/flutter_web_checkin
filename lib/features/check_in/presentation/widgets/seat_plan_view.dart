@@ -167,11 +167,10 @@ class SeatPlanCabin extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
-      mainAxisAlignment: MainAxisAlignment.center,
+    return const Wrap(
+      runSpacing: 10,
       children: [
         Flexible(child: _PassengersList()),
-        gap10,
         Flexible(
           flex: 4,
           child: _CabineWidget(),
@@ -547,53 +546,58 @@ class _PassengersList extends StatelessWidget {
           previous.passengers != current.passengers ||
           previous.selectedPassenger != current.selectedPassenger,
       builder: (context, state) {
-        return ListView.builder(
-          itemCount: state.passengers.length,
-          itemBuilder: (context, index) {
-            final passenger = state.passengers[index];
-            final isSelected =
-                passenger.passengerId == state.selectedPassenger?.passengerId;
+        return ConstrainedBox(
+          constraints: BoxConstraints(
+            maxHeight: state.passengers.length * 50,
+          ),
+          child: ListView.builder(
+            itemCount: state.passengers.length,
+            itemBuilder: (context, index) {
+              final passenger = state.passengers[index];
+              final isSelected =
+                  passenger.passengerId == state.selectedPassenger?.passengerId;
 
-            return GestureDetector(
-              onTap: () {
-                context.read<SeatPlanViewBloc>().add(
-                      SeatPlanViewEvent.passengerSelected(
-                        index,
-                      ),
-                    );
-              },
-              child: Column(
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      color: isSelected
-                          ? context.colorSchema.onPrimary
-                          : Colors.grey,
-                      border: Border(
-                        right: BorderSide(
-                          color: context.colorSchema.onPrimary,
-                          width: 5,
+              return GestureDetector(
+                onTap: () {
+                  context.read<SeatPlanViewBloc>().add(
+                        SeatPlanViewEvent.passengerSelected(
+                          index,
+                        ),
+                      );
+                },
+                child: Column(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        color: isSelected
+                            ? context.colorSchema.onPrimary
+                            : Colors.grey,
+                        border: Border(
+                          right: BorderSide(
+                            color: context.colorSchema.onPrimary,
+                            width: 5,
+                          ),
                         ),
                       ),
+                      padding: edgeInsets15,
+                      margin: const EdgeInsets.only(bottom: 5),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            passenger.passengerName,
+                          ),
+                          Text(
+                            passenger.apis!.itinerary![0].seatNumber,
+                          ),
+                        ],
+                      ),
                     ),
-                    padding: edgeInsets15,
-                    margin: const EdgeInsets.only(bottom: 5),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          passenger.passengerName,
-                        ),
-                        Text(
-                          passenger.apis!.itinerary![0].seatNumber,
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            );
-          },
+                  ],
+                ),
+              );
+            },
+          ),
         );
       },
     );
