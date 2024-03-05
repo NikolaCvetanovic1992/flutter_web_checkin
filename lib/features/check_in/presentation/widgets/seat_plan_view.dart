@@ -152,10 +152,8 @@ class MainSeatPlanDetailsContent extends StatelessWidget {
               return const CircleLoadingIndicator();
             }
 
-            return const Center(
-              child: Flexible(
-                child: SeatPlanCabin(),
-              ),
+            return const Flexible(
+              child: SeatPlanCabin(),
             );
           },
         ),
@@ -169,14 +167,15 @@ class SeatPlanCabin extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Wrap(
-      alignment: WrapAlignment.center,
-      runAlignment: WrapAlignment.center,
-      runSpacing: 10,
-      spacing: 50,
+    return const Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Flexible(child: _PassengersList()),
-        _CabineWidget(),
+        gap10,
+        Flexible(
+          flex: 4,
+          child: _CabineWidget(),
+        ),
       ],
     );
   }
@@ -247,7 +246,6 @@ class _CabineWidget extends StatelessWidget {
               constraints: BoxConstraints(
                 minWidth: 200,
                 maxWidth: numberOfRows * 80,
-                maxHeight: MediaQuery.of(context).size.height / 2,
               ),
               child: ListView.builder(
                 shrinkWrap: true,
@@ -549,59 +547,53 @@ class _PassengersList extends StatelessWidget {
           previous.passengers != current.passengers ||
           previous.selectedPassenger != current.selectedPassenger,
       builder: (context, state) {
-        return ConstrainedBox(
-          constraints: const BoxConstraints(
-            maxWidth: 300,
-            maxHeight: 50,
-          ),
-          child: ListView.builder(
-            itemCount: state.passengers.length,
-            itemBuilder: (context, index) {
-              final passenger = state.passengers[index];
-              final isSelected =
-                  passenger.passengerId == state.selectedPassenger?.passengerId;
+        return ListView.builder(
+          itemCount: state.passengers.length,
+          itemBuilder: (context, index) {
+            final passenger = state.passengers[index];
+            final isSelected =
+                passenger.passengerId == state.selectedPassenger?.passengerId;
 
-              return GestureDetector(
-                onTap: () {
-                  context.read<SeatPlanViewBloc>().add(
-                        SeatPlanViewEvent.passengerSelected(
-                          index,
-                        ),
-                      );
-                },
-                child: Column(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        color: isSelected
-                            ? context.colorSchema.onPrimary
-                            : Colors.grey,
-                        border: Border(
-                          right: BorderSide(
-                            color: context.colorSchema.onPrimary,
-                            width: 5,
-                          ),
-                        ),
+            return GestureDetector(
+              onTap: () {
+                context.read<SeatPlanViewBloc>().add(
+                      SeatPlanViewEvent.passengerSelected(
+                        index,
                       ),
-                      padding: edgeInsets15,
-                      margin: const EdgeInsets.only(bottom: 5),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            passenger.passengerName,
-                          ),
-                          Text(
-                            passenger.apis!.itinerary![0].seatNumber,
-                          ),
-                        ],
+                    );
+              },
+              child: Column(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? context.colorSchema.onPrimary
+                          : Colors.grey,
+                      border: Border(
+                        right: BorderSide(
+                          color: context.colorSchema.onPrimary,
+                          width: 5,
+                        ),
                       ),
                     ),
-                  ],
-                ),
-              );
-            },
-          ),
+                    padding: edgeInsets15,
+                    margin: const EdgeInsets.only(bottom: 5),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          passenger.passengerName,
+                        ),
+                        Text(
+                          passenger.apis!.itinerary![0].seatNumber,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
         );
       },
     );
